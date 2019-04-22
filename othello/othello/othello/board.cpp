@@ -1,8 +1,8 @@
 #include "board.h"
 
-std::vector<uint64_t > boardfunc::gen_movelist(std::array<int, 64> myboard,int curcolor) {
+std::vector<int > boardfunc::gen_movelist(std::array<int, 64> myboard,int curcolor) {
 	/*Concert the possible move(bit board) to move list*/
-	std::vector<uint64_t> mlist = std::vector<uint64_t>();
+	std::vector<int> mlist = std::vector<int>();
 	bool flag1 = false;
 	bool flag2 = false;
 	for (int i = 0; i < 64; i++){
@@ -47,22 +47,22 @@ bool boardfunc::getwinner(std::array<int, 64> myboard){
 	else return false;
 }
 
-void boardfunc::dochange(std::array<int, 64> * myboard, int temppos, int curcolor) {
+std::array<int, 64> boardfunc::dochange(std::array<int, 64>  myboard, int temppos, int curcolor) {
 	bool flag = false;
-	(*myboard)[temppos] = curcolor;
+	myboard[temppos] = curcolor;
 	for (int i = 0; i < 8; i++) {
 		int curpos=temppos;
 		while (true) {
 			//dir.at(i);
 			curpos += dir.at(i);
 			if (curpos > 63 || curpos < 0)break;
-			if ((*myboard)[curpos] == -(*myboard)[temppos]) {
+			if (myboard[curpos] == -myboard[temppos]) {
 				flag = true;
 			}
-			else if((*myboard)[curpos] == (*myboard)[temppos]&&flag){
+			else if(myboard[curpos] == myboard[temppos]&&flag){
 				curpos -= dir.at(i);
 				while (curpos != temppos) {
-					(*myboard)[curpos] = curcolor;
+					myboard[curpos] = curcolor;
 					curpos -= dir.at(i);
 				}
 				break;
@@ -74,4 +74,5 @@ void boardfunc::dochange(std::array<int, 64> * myboard, int temppos, int curcolo
 			}
 		}
 	}
+	return myboard;
 }

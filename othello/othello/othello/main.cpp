@@ -8,7 +8,8 @@
 #include <stack>
 #include <cstring>
 #include <vector>
-#include"board.h"
+#include "board.h"
+#include "MCTS.h"
 using namespace std;
 
 
@@ -67,11 +68,16 @@ using namespace std;
 
 
 int main() {
-	boardfunc tools = boardfunc();
+	//boardfunc tools = boardfunc();
+	MCTS tools = MCTS();
 	int curcolor = 1;
 	int x, y;
+	pTree root=&MCTStree();
 
-	/*std::array<int, 64> array = {
+	
+	
+
+	std::array<int, 64> array = {
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 1, 0, 0, 0,
@@ -80,63 +86,66 @@ int main() {
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
-	};*/
-	std::array<int, 64> array = {
-		1, -1, 1, 1, 1, 1, 1, 1,
-		1, -1, 1, 1, 1, -1, -1, 1,
-		1, -1, 1, 1, 1, -1, -1, 1,
-		1, -1, 1, 1, 1, -1, -1, 1,
-		1, -1, 1, 1, 1, -1, -1, 1,
-		1, -1, 1, 1, 1, -1, -1, 1,
-		1, -1, 1, 1, 1, -1, -1, 1,
-		1, -1, 1, 1, 1, 1, 1, 1,
 	};
+	root->board = array;
+	root->curcolor = curcolor;
+	root->mycolor = curcolor;
+	root->parent = NULL;
+	tools.getbeststep(root);
+	//std::array<int, 64> array = {
+	//	1, -1, 1, 1, 1, 1, 1, 1,
+	//	1, -1, 1, 1, 1, -1, -1, 1,
+	//	1, -1, 1, 1, 1, -1, -1, 1,
+	//	1, -1, 1, 1, 1, -1, -1, 1,
+	//	1, -1, 1, 1, 1, -1, -1, 1,
+	//	1, -1, 1, 1, 1, -1, -1, 1,
+	//	1, -1, 1, 1, 1, -1, -1, 1,
+	//	1, -1, 1, 1, 1, 1, 1, 1,
+	//};
 	for (int i = 0; i < 64; i++) {
 		if (!(i % 8))cout << endl;
 		cout << array[i] << "\t";
 	}
 	cout << endl;
 	cout << endl;
-	while (true) {	
-		//std::vector<uint64_t >possible =((curcolor==1)? tools.gen_movelist(W, B): tools.gen_movelist(B, W));
-		std::vector<uint64_t >possible = tools.gen_movelist(array, curcolor);
-		if (possible.size() == 0 ) {
-			curcolor = -curcolor;
-			possible= tools.gen_movelist(array, curcolor);
-			if (possible.size() == 0) {
-				cout << "game over, the winner is: " << ((tools.getwinner(array)) ? "black" : "white") << endl;
-				break;
-			}
-			else{
-				cout << ((curcolor == 1) ? "white" : "black") << " have no legal pos, jump turn" << endl;
-			}
-		}
-
-		cout << "please input the pos of next chess" << "color: " << ((curcolor == 1) ? "black" : "white") << endl;
-		cin >> x >> y;
-		int temppos=(y-1)*8+x-1;
-		bool flag=false;
-		for (int i = 0; i < possible.size(); i++)
-			if (temppos == possible[i])flag = true;
-		if (flag) {
-			tools.dochange(&array, temppos,curcolor);
-			curcolor = -curcolor;
-		}
-		else {
-			cout << "illegal pos, redo" << endl;
-			continue;
-		}
-		for (int i = 1; i <= 8; i++){
-			cout << i << "\t";
-
-		}
-		for (int i = 0; i < 64; i++) {
-			if (!(i % 8))cout << i/8<<endl;
-			cout << array[i] << "\t";
-		}
-		cout << endl;
-		cout << endl;
-	}
+	//while (true) {	
+	//	//std::vector<uint64_t >possible =((curcolor==1)? tools.gen_movelist(W, B): tools.gen_movelist(B, W));
+	//	std::vector<uint64_t >possible = tools.gen_movelist(array, curcolor);
+	//	if (possible.size() == 0 ) {
+	//		curcolor = -curcolor;
+	//		possible= tools.gen_movelist(array, curcolor);
+	//		if (possible.size() == 0) {
+	//			cout << "game over, the winner is: " << ((tools.getwinner(array)) ? "black" : "white") << endl;
+	//			break;
+	//		}
+	//		else{
+	//			cout << ((curcolor == 1) ? "white" : "black") << " have no legal pos, jump turn" << endl;
+	//		}
+	//	}
+	//	cout << "please input the pos of next chess" << "color: " << ((curcolor == 1) ? "black" : "white") << endl;
+	//	cin >> x >> y;
+	//	int temppos=(y-1)*8+x-1;
+	//	bool flag=false;
+	//	for (int i = 0; i < possible.size(); i++)
+	//		if (temppos == possible[i])flag = true;
+	//	if (flag) {
+	//		tools.dochange(&array, temppos,curcolor);
+	//		curcolor = -curcolor;
+	//	}
+	//	else {
+	//		cout << "illegal pos, redo" << endl;
+	//		continue;
+	//	}
+	//	for (int i = 1; i <= 8; i++){
+	//		cout << i << "\t";
+	//	}
+	//	for (int i = 0; i < 64; i++) {
+	//		if (!(i % 8))cout << i/8<<endl;
+	//		cout << array[i] << "\t";
+	//	}
+	//	cout << endl;
+	//	cout << endl;
+	//}
 	
 
 	system("pause");
