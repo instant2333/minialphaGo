@@ -4,14 +4,14 @@
 
 boardfunc tools = boardfunc();
 
-//´´½¨¸ù½Úµã
+//åˆ›å»ºæ ¹èŠ‚ç‚¹
 MCTS_node *new_MCT_root(struct _state *game)
 {
 	MCTS_node *this_node = (MCTS_node *)malloc(sizeof(struct _MCTS_node));
 	this_node->state = (struct _state*)malloc(sizeof(struct _state));
 	this_node->children_head = NULL;
 	this_node->children_tail = NULL;
-	memcpy(this_node->state, game, sizeof(struct _state));//±£´æµ±Ç°Æå¾Ö×´Ì¬
+	memcpy(this_node->state, game, sizeof(struct _state));//ä¿å­˜å½“å‰æ£‹å±€çŠ¶æ€
 	this_node->parent = NULL;
 	this_node->search_tail = NULL;
 	this_node->next_sibling = NULL;
@@ -20,7 +20,7 @@ MCTS_node *new_MCT_root(struct _state *game)
 	return this_node;
 }
 
-//´´½¨Ò¶×Ó½Úµã
+//åˆ›å»ºå¶å­èŠ‚ç‚¹
 MCTS_node *new_MCT_leaf(MCTS_node *parent)
 {
 	MCTS_node *this_node = new_MCT_root(parent->state);
@@ -28,7 +28,7 @@ MCTS_node *new_MCT_leaf(MCTS_node *parent)
 	return this_node;
 }
 
-//ÅĞ¶ÏÄÜ·ñ¼ÌĞø
+//åˆ¤æ–­èƒ½å¦ç»§ç»­
 bool can_continue(std::array<int, 64> array, int color)
 {
 	std::vector<uint64_t >possible = tools.gen_movelist(array, color);
@@ -39,7 +39,7 @@ bool can_continue(std::array<int, 64> array, int color)
 	return true;
 }
 
-//ÅĞ¶Ï»ñÊ¤Õß
+//åˆ¤æ–­è·èƒœè€…
 int get_winner(struct _state *game)
 {
 	int white_num = 0, black_num = 0;
@@ -47,16 +47,16 @@ int get_winner(struct _state *game)
 	{
 		if (game->array[i] == -1)
 		{
-			white_num++;//°×Æå
+			white_num++;//ç™½æ£‹
 		}
 		else if (game->array[i] == 1)
 		{
-			black_num++;//ºÚÆå
+			black_num++;//é»‘æ£‹
 		}
 	}
 	if (white_num == black_num)
 	{
-		game->isEnd = 2;//Æ½¾Ö
+		game->isEnd = 2;//å¹³å±€
 	}
 	else
 	{
@@ -65,26 +65,26 @@ int get_winner(struct _state *game)
 	return game->isEnd;
 }
 
-//±ä»»Æå×ÓÑÕÉ«
+//å˜æ¢æ£‹å­é¢œè‰²
 int get_another_color(int color)
 {
 	return color == 1 ? -1 : 1;
 }
 
-//±ä»»ÆåÅÌ¸ñ¾Ö½øÈëÏÀÒå¸ñ¾Ö
+//å˜æ¢æ£‹ç›˜æ ¼å±€è¿›å…¥ä¾ ä¹‰æ ¼å±€
 struct _state *get_next_state(struct _state *game, uint64_t pos)
 {
-	//·­×ªÆå×Ó
+	//ç¿»è½¬æ£‹å­
 	tools.dochange(&game->array, pos, game->this_color);
-	//¶Ô·½ÓĞÆå×Ó¿ÉÏÂ
+	//å¯¹æ–¹æœ‰æ£‹å­å¯ä¸‹
 	if (can_continue(game->array, get_another_color(game->this_color)))
 	{
 		game->this_color = get_another_color(game->this_color);
 	}
-	//¶Ô·½ÎŞÆå×Ó¿ÉÏÂ
+	//å¯¹æ–¹æ— æ£‹å­å¯ä¸‹
 	else
 	{
-		//×Ô¼ºÒ²ÎŞÆå×Ó¿ÉÏÂ
+		//è‡ªå·±ä¹Ÿæ— æ£‹å­å¯ä¸‹
 		if (!can_continue(game->array, game->this_color))
 		{
 			game->this_color = 0;
@@ -94,7 +94,7 @@ struct _state *get_next_state(struct _state *game, uint64_t pos)
 	return game;
 }
 
-//ÍØÕ¹Ò»¸ö½Úµã
+//æ‹“å±•ä¸€ä¸ªèŠ‚ç‚¹
 void expand(MCTS_node *parent)
 {
 	MCTS_node *children_head = NULL;
@@ -112,7 +112,7 @@ void expand(MCTS_node *parent)
 		{
 			MCTS_node *children_sibling = new_MCT_leaf(parent);
 			children_sibling->state = get_next_state(children_sibling->state, possible[i]);
-			children_head->next_sibling = children_sibling;
+			children_this->next_sibling = children_sibling;
 			children_this = children_sibling;
 		}
 	}
@@ -121,7 +121,7 @@ void expand(MCTS_node *parent)
 	parent->search_tail = NULL;
 }
 
-//ÅĞ¶ÏÊÇ·ñÖÕ¾Ö
+//åˆ¤æ–­æ˜¯å¦ç»ˆå±€
 bool isTerminal(MCTS_node *node)
 {
 	if (node->children_head == NULL)
@@ -131,7 +131,7 @@ bool isTerminal(MCTS_node *node)
 	return node->state->isEnd != 0;
 }
 
-//¼ÆËãÃ¿Ò»¸ö½ÚµãµÄUCBÖµ
+//è®¡ç®—æ¯ä¸€ä¸ªèŠ‚ç‚¹çš„UCBå€¼
 double get_ucb(MCTS_node *this_node, int N_total)
 {
 	double N, W;
@@ -144,7 +144,7 @@ double get_ucb(MCTS_node *this_node, int N_total)
 	return W / N + C * sqrt(2 * log(N_total) / N);
 }
 
-//Ñ¡È¡¶ÔÊÖÆå×îµÍµÄUCB,ÎÒ·½Æå×î¸ßµÄUCB
+//é€‰å–å¯¹æ‰‹æ£‹æœ€ä½çš„UCB,æˆ‘æ–¹æ£‹æœ€é«˜çš„UCB
 MCTS_node *best_child(MCTS_node *parent, int color)
 {
 	MCTS_node *best_node = parent;
@@ -157,7 +157,7 @@ MCTS_node *best_child(MCTS_node *parent, int color)
 	{
 		double ucb = get_ucb(this_node, N);
 		if (parent->state->this_color == color)
-		{//ÎÒ·½ÆåÑ¡È¡×î¸ßUCB
+		{//æˆ‘æ–¹æ£‹é€‰å–æœ€é«˜UCB
 			if (ucb > best_ucb_same)
 			{
 				best_ucb_same = ucb;
@@ -165,7 +165,7 @@ MCTS_node *best_child(MCTS_node *parent, int color)
 			}
 		}
 		else
-		{//¶ÔÊÖÆåUCBÑ¡È¡×îµÍ
+		{//å¯¹æ‰‹æ£‹UCBé€‰å–æœ€ä½
 			if (ucb < best_ucb_diff)
 			{
 				best_ucb_diff = ucb;
@@ -177,16 +177,16 @@ MCTS_node *best_child(MCTS_node *parent, int color)
 	return best_node;
 }
 
-//Ëæ»úÏÂÆå
+//éšæœºä¸‹æ£‹
 struct _state *get_next_state_with_random_choice(struct _state *game)
 {
 	std::vector<uint64_t >possible = tools.gen_movelist(game->array, game->this_color);
-	int c = rand() % possible.size();//Ëæ»úÏÂÆå
+	int c = rand() % possible.size();//éšæœºä¸‹æ£‹
 	game = get_next_state(game, possible[c]);
 	return game;
 }
 
-//½øĞĞÒ»´ÎÃÉÌØ¿¨ÂåÄ£Äâ
+//è¿›è¡Œä¸€æ¬¡è’™ç‰¹å¡æ´›æ¨¡æ‹Ÿ
 int default_policy(MCTS_node *parent)
 {
 	struct _state *state = (struct _state *)malloc(sizeof(struct _state));
@@ -209,12 +209,12 @@ MCTS_node *tree_policy(MCTS_node *root)
 		if (best_node->search_tail != best_node->children_tail)
 		{
 			if (best_node->search_tail == NULL)
-			{//ÍØÕ¹µÚÒ»¸ö½Úµã
+			{//æ‹“å±•ç¬¬ä¸€ä¸ªèŠ‚ç‚¹
 				this_node = best_node->children_head;
 				best_node->search_tail = this_node;
 			}
 			else
-			{//ÍØÕ¹ºóĞø½Úµã
+			{//æ‹“å±•åç»­èŠ‚ç‚¹
 				best_node->search_tail = best_node->search_tail->next_sibling;
 				this_node = best_node->search_tail;
 			}
@@ -239,7 +239,7 @@ void backup(MCTS_node *node, int winner)
 		}
 		node = node->parent;
 	}
-	node->sim_times += 1;//¸ù½Úµã
+	node->sim_times += 1;//æ ¹èŠ‚ç‚¹
 }
 
 
@@ -262,7 +262,7 @@ double UCTSearch(struct _state *game)
 		//
 	}
 
-	//¼ÆËãÊ±¼ä
+	//è®¡ç®—æ—¶é—´
 	finish = clock();
 	duration = (double)(finish - start) / CLOCKS_PER_SEC;
 	/*printf("%d:%d\n", start,finish);*/
