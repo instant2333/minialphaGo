@@ -137,11 +137,12 @@ double get_ucb(MCTS_node *this_node, int N_total)
 	double N, W;
 	N = (double)(this_node->sim_times);
 	W = (double)(this_node->win_times);
-	double C = 1 / 2;
+	//double C = 1 / 2;
 	if (N == 0) {
 		return INFINITY - 1;
 	}
-	return W / N + C * sqrt(2 * log(N_total) / N);
+	//return W / N + C * sqrt(2 * log(N_total) / N);
+	return W / N + sqrt(log(N_total) / N);
 }
 
 //选取对手棋最低的UCB,我方棋最高的UCB
